@@ -28,10 +28,14 @@ public class ExpenseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Expense> getExpenseById(@PathVariable Long id) {
+    public ResponseEntity<Expense> getExpenseById(@PathVariable Long id, Principal principal) {
+        String email = principal.getName();
         Expense expense = expenseService.getExpenseById(id);
         if (expense == null) {
             return ResponseEntity.notFound().build();
+        }
+        if (!expense.getUser().getEmail().equals(email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         return ResponseEntity.ok(expense);
     }
@@ -48,22 +52,45 @@ public class ExpenseController {
         return ResponseEntity.ok(expense);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Expense> updateExpenseById(@PathVariable Long id, @RequestBody Expense updatedExpense) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<Expense> updateExpenseById(@PathVariable Long id, @RequestBody Expense updatedExpense, Principal principal) {
+        String email = principal.getName();
         Expense expense = expenseService.getExpenseById(id);
         if (expense == null) {
             return ResponseEntity.notFound().build();
         }
-        expense.setAmount(updatedExpense.getAmount());
-        expense.setCategory(updatedExpense.getCategory());
-        expense.setDescription(updatedExpense.getDescription());
-        expense.setName(updatedExpense.getName());
-        expense.setDate(updatedExpense.getDate());
+        if (!expense.getUser().getEmail().equals(email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (updatedExpense.getAmount() != null) {
+            expense.setAmount(updatedExpense.getAmount());
+        }
+        if (updatedExpense.getCategory() != null) {
+            expense.setCategory(updatedExpense.getCategory());
+        }
+        if (updatedExpense.getDescription() != null) {
+            expense.setDescription(updatedExpense.getDescription());
+        }
+        if (updatedExpense.getName() != null) {
+            expense.setName(updatedExpense.getName());
+        }
+        if (updatedExpense.getDate() != null) {
+            expense.setDate(updatedExpense.getDate());
+        }
+        expenseService.saveExpense(expense);
         return ResponseEntity.ok(expense);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteExpenseById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteExpenseById(@PathVariable Long id, Principal principal) {
+        String email = principal.getName();
+        Expense expense = expenseService.getExpenseById(id);
+        if (expense == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (!expense.getUser().getEmail().equals(email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         expenseService.deleteExpenseById(id);
         return ResponseEntity.noContent().build();
     }

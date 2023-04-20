@@ -27,10 +27,14 @@ public class IncomeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Income> getIncomeById(@PathVariable Long id) {
+    public ResponseEntity<Income> getIncomeById(@PathVariable Long id, Principal principal) {
+        String email = principal.getName();
         Income income = incomeService.getIncomeById(id);
         if (income == null) {
             return ResponseEntity.notFound().build();
+        }
+        if (!income.getUser().getEmail().equals(email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         return ResponseEntity.ok(income);
     }
@@ -47,22 +51,45 @@ public class IncomeController {
         return ResponseEntity.ok(income);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Income> updateIncomeById(@PathVariable Long id, @RequestBody Income updatedIncome) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<Income> updateIncomeById(@PathVariable Long id, @RequestBody Income updatedIncome, Principal principal) {
+        String email = principal.getName();
         Income income = incomeService.getIncomeById(id);
         if (income == null) {
             return ResponseEntity.notFound().build();
         }
-        income.setAmount(updatedIncome.getAmount());
-        income.setCategory(updatedIncome.getCategory());
-        income.setDescription(updatedIncome.getDescription());
-        income.setName(updatedIncome.getName());
-        income.setDate(updatedIncome.getDate());
+        if (!income.getUser().getEmail().equals(email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (updatedIncome.getAmount() != null) {
+            income.setAmount(updatedIncome.getAmount());
+        }
+        if (updatedIncome.getCategory() != null) {
+            income.setCategory(updatedIncome.getCategory());
+        }
+        if (updatedIncome.getDescription() != null) {
+            income.setDescription(updatedIncome.getDescription());
+        }
+        if (updatedIncome.getName() != null) {
+            income.setName(updatedIncome.getName());
+        }
+        if (updatedIncome.getDate() != null) {
+            income.setDate(updatedIncome.getDate());
+        }
+        incomeService.saveIncome(income);
         return ResponseEntity.ok(income);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteIncomeById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteIncomeById(@PathVariable Long id, Principal principal) {
+        String email = principal.getName();
+        Income income = incomeService.getIncomeById(id);
+        if (income == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (!income.getUser().getEmail().equals(email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         incomeService.deleteIncomeById(id);
         return ResponseEntity.noContent().build();
     }
