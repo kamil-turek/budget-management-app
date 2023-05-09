@@ -9,11 +9,11 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "expenses")
+@Table(name = "financial_records")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Expense {
+public class FinancialRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,9 +30,12 @@ public class Expense {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ExpenseCategory category;
+    private RecordCategory category;
 
     private String description;
+
+    @Column(nullable = false)
+    private Boolean is_income;
 
     @JsonIgnore
     @ManyToOne

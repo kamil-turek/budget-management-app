@@ -1,9 +1,9 @@
 package com.budgetmanagementapp.repository;
 
-import com.budgetmanagementapp.model.Expense;
+import com.budgetmanagementapp.model.FinancialRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ExpenseRepository extends JpaRepository<Expense, Long> {
+public interface FinancialRecordRepository extends JpaRepository<FinancialRecord, Long> {
 }

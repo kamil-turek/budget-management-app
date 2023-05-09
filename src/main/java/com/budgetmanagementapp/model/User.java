@@ -39,10 +39,7 @@ public class User implements UserDetails {
     private Role role;
 
     @OneToMany(mappedBy = "user")
-    private List<Expense> expenses;
-
-    @OneToMany(mappedBy = "user")
-    private List<Income> incomes;
+    private List<FinancialRecord> expenses;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

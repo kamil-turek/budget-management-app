@@ -1,6 +1,6 @@
 package com.budgetmanagementapp.model;
 
-public enum ExpenseCategory {
+public enum RecordCategory {
     FOOD,
     TRANSPORTATION,
     HOUSING,
@@ -11,5 +11,11 @@ public enum ExpenseCategory {
     PERSONAL_CARE,
     DEBT,
     CHARITY,
-    OTHER
+    OTHER_EXPENSE,
+    SALARY,
+    BUSINESS,
+    INVESTMENT,
+    RENTAL,
+    GIFTS,
+    OTHER_INCOME
 }
